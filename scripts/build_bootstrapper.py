@@ -35,12 +35,12 @@ if 'MARLIN_GIT_BRANCH' in environ and \
         f'{"import-2.0.x" if BRANCH == "2.0.x" else BRANCH}.zip'
 
     fw_repo = get(MARLIN_FIRMWARE_ZIP)
-    fw_zip = ZipFile(BytesIO(fw_repo.content))
-    fw_zip.extractall(PROJECT_DIR)
+    with ZipFile(BytesIO(fw_repo.content)) as fw_zip:
+        fw_zip.extractall(PROJECT_DIR)
 
     conf_repo = get(MARLIN_CONFIG_ZIP)
-    conf_zip = ZipFile(BytesIO(conf_repo.content))
-    conf_zip.extractall(PROJECT_DIR)
+    with ZipFile(BytesIO(conf_repo.content)) as conf_zip:
+        conf_zip.extractall(PROJECT_DIR)
 
     with open(f'{FIRMWARE_DIR}/README.md', 'w+') as readme:
         readme.write(f'# Marlin Firmware build from "{BRANCH}" branch.\n')
