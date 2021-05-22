@@ -17,6 +17,8 @@ from requests import get
 # Marlin GitHub Repositories
 ###############################################################################
 MARLIN_GITHUB_URL = 'https://github.com/MarlinFirmware/'
+environ['LATEST_RELEASE'] = get(f'{MARLIN_GITHUB_URL}Marlin/releases/latest',
+                                allow_redirects=True).url.split('/')[-1]
 MARLIN_BRANCHES = ['2.0.x', 'bugfix-2.0.x']
 
 if 'MARLIN_GIT_BRANCH' in environ and \
@@ -29,10 +31,8 @@ if 'MARLIN_GIT_BRANCH' in environ and \
     BRANCH = environ['MARLIN_GIT_BRANCH']
 
     MARLIN_FIRMWARE_ZIP = f'{MARLIN_GITHUB_URL}Marlin/archive/{BRANCH}.zip'
-    # Configurations' Stable branch is "import-2.0.x" instead of "2.0.x"
-    MARLIN_CONFIG_ZIP = \
-        f'{MARLIN_GITHUB_URL}Configurations/archive/' \
-        f'{"import-2.0.x" if BRANCH == "2.0.x" else BRANCH}.zip'
+    MARLIN_CONFIG_ZIP = f'{MARLIN_GITHUB_URL}Configurations/archive/' \
+                        f'{environ["LATEST_RELEASE"] if BRANCH == "2.0.x" else BRANCH}.zip'
 
     fw_repo = get(MARLIN_FIRMWARE_ZIP)
     with ZipFile(BytesIO(fw_repo.content)) as fw_zip:
@@ -47,7 +47,10 @@ if 'MARLIN_GIT_BRANCH' in environ and \
 
     # Bootstrap PIO for most 32bit boards using STM32, Atmel AVR
     chdir(Path(f'{PROJECT_DIR}/Marlin-{BRANCH}/'))
-    run(['pio', 'platform', 'install', 'ststm32', 'atmelavr', 'atmelmegaavr'],
+    run(['pio', 'platform', 'install',
+         'ststm32',
+         'atmelavr',
+         'atmelmegaavr'],
         check=True)
 
 else:

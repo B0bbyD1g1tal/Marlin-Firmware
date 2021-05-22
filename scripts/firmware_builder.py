@@ -27,7 +27,7 @@ BRANCH = environ["MARLIN_GIT_BRANCH"]
 PROJECT_DIR = Path(environ["WORK_DIR"])
 MARLIN_FW = Path(f'{PROJECT_DIR}/Marlin-{BRANCH}/')
 MARLIN_CONFIGS = Path(f'{PROJECT_DIR}/Configurations-'
-                      f'{"import-2.0.x" if BRANCH == "2.0.x" else BRANCH}/')
+                      f'{environ["LATEST_RELEASE"] if BRANCH == "2.0.x" else BRANCH}')
 ###############################################################################
 # Copy Configurations to Marlin PIO Project
 ###############################################################################

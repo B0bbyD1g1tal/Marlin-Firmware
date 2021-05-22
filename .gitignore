@@ -10,3 +10,6 @@
 
 # Docker Hub
 /ACCESS_TOKEN
+
+# MyPy
+.mypy_cache/
