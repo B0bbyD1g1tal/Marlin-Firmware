@@ -30,9 +30,12 @@ if 'MARLIN_GIT_BRANCH' in environ and \
     FIRMWARE_DIR = Path(environ['FIRMWARE_BIN_DIR'])
     BRANCH = environ['MARLIN_GIT_BRANCH']
 
+    CONFIG_BRANCH = environ["LATEST_RELEASE"] if BRANCH == "2.0.x" \
+        else BRANCH  # bugfix-2.0.x
     MARLIN_FIRMWARE_ZIP = f'{MARLIN_GITHUB_URL}Marlin/archive/{BRANCH}.zip'
-    MARLIN_CONFIG_ZIP = f'{MARLIN_GITHUB_URL}Configurations/archive/' \
-                        f'{environ["LATEST_RELEASE"] if BRANCH == "2.0.x" else BRANCH}.zip'
+    MARLIN_CONFIG_ZIP = \
+        f'{MARLIN_GITHUB_URL}Configurations/archive/' \
+        f'{CONFIG_BRANCH}.zip'
 
     fw_repo = get(MARLIN_FIRMWARE_ZIP)
     with ZipFile(BytesIO(fw_repo.content)) as fw_zip:
@@ -43,7 +46,7 @@ if 'MARLIN_GIT_BRANCH' in environ and \
         conf_zip.extractall(PROJECT_DIR)
 
     with open(f'{FIRMWARE_DIR}/README.md', 'w+') as readme:
-        readme.write(f'# Marlin Firmware build from "{BRANCH}" branch.\n')
+        readme.write(f'# Marlin Firmware: "{CONFIG_BRANCH}"\n')
 
     # Bootstrap PIO for most 32bit boards using STM32, Atmel AVR
     chdir(Path(f'{PROJECT_DIR}/Marlin-{BRANCH}/'))

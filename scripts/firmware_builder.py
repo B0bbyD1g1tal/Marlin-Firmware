@@ -26,8 +26,9 @@ def extract_values(file, value, token, redundant):
 BRANCH = environ["MARLIN_GIT_BRANCH"]
 PROJECT_DIR = Path(environ["WORK_DIR"])
 MARLIN_FW = Path(f'{PROJECT_DIR}/Marlin-{BRANCH}/')
-MARLIN_CONFIGS = Path(f'{PROJECT_DIR}/Configurations-'
-                      f'{environ["LATEST_RELEASE"] if BRANCH == "2.0.x" else BRANCH}')
+MARLIN_CONFIGS = \
+    Path(f'{PROJECT_DIR}/Configurations-'
+         f'{environ["LATEST_RELEASE"] if BRANCH == "2.0.x" else BRANCH}')
 ###############################################################################
 # Copy Configurations to Marlin PIO Project
 ###############################################################################
