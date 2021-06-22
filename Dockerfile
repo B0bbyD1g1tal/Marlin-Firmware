@@ -28,13 +28,16 @@ Maintainer=${MAINTAINER}
 RUN env && \
 apt-get update && \
 #apt-get upgrade -y && \
-apt-get install --no-install-recommends -y \
+apt-get install -y \
+--no-install-recommends \
 python${PYTHON_VERSION} \
 python-is-python3 \
 python3-pip \
 python3-distutils && \
-pip3 install platformio requests --no-cache-dir && \
 rm -rf /var/lib/apt/lists/* && \
+pip3 install --no-cache-dir \
+platformio \
+requests && \
 useradd -ms /bin/bash ${MAINTAINER} && \
 mkdir ${WORK_DIR} ${FIRMWARE_BIN_DIR} && \
 chown ${MAINTAINER} ${WORK_DIR} ${FIRMWARE_BIN_DIR}
@@ -42,6 +45,7 @@ chown ${MAINTAINER} ${WORK_DIR} ${FIRMWARE_BIN_DIR}
 ADD scripts/ /usr/local/bin/
 USER ${MAINTAINER}
 WORKDIR ${WORK_DIR}
+
 RUN build_bootstrapper.py
 
 ENTRYPOINT firmware_builder.py
