@@ -1,8 +1,7 @@
-#!/usr/bin/python3.8
+#!/usr/bin/python3
 
 """
 Clones Marlin Firmware and Configurations repositories
-by the specified Git-Branch
 """
 
 import sys
@@ -17,10 +16,13 @@ from requests import get
 # Marlin GitHub Repositories
 ###############################################################################
 MARLIN_GITHUB_URL = 'https://github.com/MarlinFirmware/'
-environ['LATEST_RELEASE'] = get(f'{MARLIN_GITHUB_URL}Marlin/releases/latest',
-                                allow_redirects=True).url.split('/')[-1]
 MARLIN_BRANCHES = ['2.0.x', 'bugfix-2.0.x']
 
+LATEST_RELEASE = get(f'{MARLIN_GITHUB_URL}Marlin/releases/latest',
+                     allow_redirects=True).url.split('/')[-1]
+with open('/latest-release', 'w+') as latest_release:
+    latest_release.write(LATEST_RELEASE)
+###############################################################################
 if 'MARLIN_GIT_BRANCH' in environ and \
         'WORK_DIR' in environ and \
         'FIRMWARE_BIN_DIR' in environ and \
@@ -28,14 +30,14 @@ if 'MARLIN_GIT_BRANCH' in environ and \
         environ['MARLIN_GIT_BRANCH'] in MARLIN_BRANCHES:
     PROJECT_DIR = Path(environ['WORK_DIR'])
     FIRMWARE_DIR = Path(environ['FIRMWARE_BIN_DIR'])
-    BRANCH = environ['MARLIN_GIT_BRANCH']
 
-    CONFIG_BRANCH = environ["LATEST_RELEASE"] if BRANCH == "2.0.x" \
+    BRANCH = environ['MARLIN_GIT_BRANCH']
+    CONFIG_BRANCH = LATEST_RELEASE if BRANCH == "2.0.x" \
         else BRANCH  # bugfix-2.0.x
+
     MARLIN_FIRMWARE_ZIP = f'{MARLIN_GITHUB_URL}Marlin/archive/{BRANCH}.zip'
     MARLIN_CONFIG_ZIP = \
-        f'{MARLIN_GITHUB_URL}Configurations/archive/' \
-        f'{CONFIG_BRANCH}.zip'
+        f'{MARLIN_GITHUB_URL}Configurations/archive/{CONFIG_BRANCH}.zip'
 
     fw_repo = get(MARLIN_FIRMWARE_ZIP)
     with ZipFile(BytesIO(fw_repo.content)) as fw_zip:
